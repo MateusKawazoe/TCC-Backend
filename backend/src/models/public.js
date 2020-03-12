@@ -8,6 +8,12 @@ const publicSchema = new Schema({
         required: true,
         positiva: Number,
         negativa: Number,
+    },
+    usuario: {},
+    horta: {},
+    resposta: {
+        usuario: {},
+        conteudo: String
     }
 })
 
