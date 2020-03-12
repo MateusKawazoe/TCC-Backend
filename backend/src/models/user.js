@@ -27,9 +27,8 @@ const userSchema = new Schema({
         required: true
     },
     endereco: {},
-    publicacoes: [],
-    hortas: [],
-    nivel: {}
+    nivel: {},
+    integridade: Number
 }, {
     timestamps: true
 })
