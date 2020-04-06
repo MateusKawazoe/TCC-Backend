@@ -22,7 +22,13 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
-    endereco: {},
+    localizacao: {
+        endereco: {},
+        latitude: Number,
+        longitude: Number
+    },
+    horta: [],
+    publicacoes: [],
     nivel: {},
     integridade: Number
 }, {

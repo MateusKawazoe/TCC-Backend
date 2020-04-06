@@ -1,17 +1,21 @@
 const { Schema, model } = require('mongoose')
 
 const cropSchema = new Schema({
+    nome: {
+        type: String,
+        required: true
+    },
     dono: {
-        type: Number,
+        type: String,
         required: true
     },
-    participantes: {},
-    localização: {
-        endereço: {},
+    participantes: [],
+    localizacao: {
+        endereco: {},
         latitude: Number,
-        longitude: Number,
-        required: true
+        longitude: Number
     },
+    publicacoes: [],
     sensores: {},
     nivel: {}
 }, {
