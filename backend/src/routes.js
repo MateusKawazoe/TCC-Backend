@@ -1,6 +1,6 @@
 const express = require('express')
 const userController = require('./controllers/userController')
-const cropController = require('./controllers/cropCrontroller')
+const cropController = require('./controllers/cropController')
 const routes = express.Router()
 
 // Users routes --
