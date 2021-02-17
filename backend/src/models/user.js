@@ -6,19 +6,11 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
+    senha: {
+        type: String,
+        required: true
+    },
     nome: {
-        type: String,
-        required: true
-    },
-    sobrenome: {
-        type: String,
-        required: true
-    },
-    idade: {
-        type: Number,
-        required: true
-    },
-    email: {
         type: String,
         required: true
     },
@@ -26,6 +18,10 @@ const userSchema = new Schema({
         endereco: {},
         latitude: Number,
         longitude: Number
+    },
+    token: {
+        type: String,
+        required: true
     },
     horta: [],
     publicacoes: [],

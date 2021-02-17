@@ -1,31 +1,34 @@
 const user = require('../models/user')
+const auth_token = require('../services/auth')
+const md5 = require("md5")
 
 module.exports = {
     async store(req, res) {
         const {
             foto,
             usuario,
+            senha,
             nome,
-            sobrenome,
-            idade,
-            email,
             localizacao
         } = req.body
 
         const userExists = await user.findOne({ usuario })
-        const nameExists = await user.findOne({ nome, sobrenome })
+        const nameExists = await user.findOne({ nome })
 
         if (userExists || nameExists) {
             return res.json("Usuário já cadastrado!")
         }
 
+        const token = await auth_token.generateToken({
+            usuario,
+            senha
+        })
+
         const users = await user.create({
             foto: foto,
             usuario: usuario,
+            senha: md5(senha + global.SALT_KEY),
             nome: nome,
-            sobrenome: sobrenome,
-            idade: idade,
-            email: email,
             localizacao: localizacao,
             integridade: 1,
             nivel: {
@@ -70,14 +73,14 @@ module.exports = {
     },
 
     async update(req, res) {
-        const { email, foto, usuario } = req.body
+        const { foto, usuario } = req.body
 
         var exists = await user.findOne({ usuario })
 
         if (exists) {
             await user.updateOne(
                 { usuario },
-                { $set: { email: email, foto: foto } },
+                { $set: { foto: foto } },
                 { $upsert: false }
             )
 
