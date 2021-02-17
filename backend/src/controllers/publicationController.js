@@ -31,7 +31,8 @@ module.exports = {
             tipo: tipo,
             avaliacao: {
                 positiva: 0,
-                negativa: 0
+                negativa: 0,
+                usuario: []
             }
         })
 

@@ -143,12 +143,9 @@ module.exports = {
 
         await user.updateOne(
             { usuario: dono },
-            { $pull: { horta: nome } }
-        )
-
-        await user.updateOne(
-            { usuario: dono },
-            { $push: { horta: novoNome } }
+            { $set: { horta: {
+                nome: novoNome
+            } } }
         )
 
         return res.json("Alterações realizadas com sucesso!")
