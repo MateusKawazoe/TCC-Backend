@@ -12,8 +12,12 @@ module.exports = {
             localizacao
         } = req.body
 
-        const userExists = await user.findOne({ usuario })
-        const nameExists = await user.findOne({ nome })
+        const userExists = await user.findOne({
+            usuario
+        })
+        const nameExists = await user.findOne({
+            nome
+        })
 
         if (userExists || nameExists) {
             return res.json("Usuário já cadastrado!")
@@ -21,7 +25,7 @@ module.exports = {
 
         const token = await auth_token.generateToken({
             usuario,
-            senha
+            senha: md5(senha + global.SALT_KEY)
         })
 
         const users = await user.create({
@@ -31,6 +35,7 @@ module.exports = {
             nome: nome,
             localizacao: localizacao,
             integridade: 1,
+            token: token,
             nivel: {
                 lvl: 0,
                 xp: 0
@@ -46,7 +51,9 @@ module.exports = {
 
     async showOne(req, res) {
         const usuario = req.headers.usuario
-        const exists = await user.findOne({ usuario })
+        const exists = await user.findOne({
+            usuario
+        })
 
         if (exists) {
             return res.json(exists)
@@ -56,15 +63,19 @@ module.exports = {
     },
 
     async usersNumber(req, res) {
-        return res.json('Existem ' + (await user.find()).length + ' usuários cadastrados no momentos!')
+        return res.json(parseInt(await user.find().length))
     },
 
     async delete(req, res) {
         const usuario = req.headers.usuario
-        const exists = await user.findOne({ usuario })
+        const exists = await user.findOne({
+            usuario
+        })
 
         if (exists) {
-            await user.deleteOne({ usuario })
+            await user.deleteOne({
+                usuario
+            })
 
             return res.json('Usuário deletado com sucesso!')
         }
@@ -73,21 +84,56 @@ module.exports = {
     },
 
     async update(req, res) {
-        const { foto, usuario } = req.body
+        const {
+            foto,
+            usuario,
+            senha
+        } = req.body
 
-        var exists = await user.findOne({ usuario })
+        var exists = await user.findOne({
+            usuario
+        })
 
         if (exists) {
-            await user.updateOne(
-                { usuario },
-                { $set: { foto: foto } },
-                { $upsert: false }
-            )
+            let aux = {
+                foto: exists.foto,
+                senha: exists.senha,
+                token: exists.token
+            }
 
-            return res.json('Usuário atualizado com sucesso!\n\n' + exists)
+            if (foto)
+                aux.foto = foto
+            if (senha) {
+                aux.senha = md5(senha + global.SALT_KEY)
+                aux.token = await auth_token.generateToken({
+                    usuario,
+                    senha: aux.senha
+                })
+            }
+                
+
+            await user.updateOne({
+                usuario
+            }, {
+                $set: {
+                    foto: aux.foto,
+                    senha: aux.senha,
+                    token: aux.token
+                }
+            }, {
+                $upsert: false
+            })
+
+            return res.json(exists)
         }
 
-        exists = await user.findOne({ usuario })
+        exists = await user.findOne({
+            usuario
+        })
         return res.json('Usuário não existe!')
+    },
+
+    async xpUpdate(req, res) {
+        
     }
 }

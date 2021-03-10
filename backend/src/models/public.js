@@ -25,7 +25,7 @@ const publicSchema = new Schema({
         required: true
     },
     resposta: {
-        usuario: {},
+        usuario: String,
         conteudo: String
     }
 })
