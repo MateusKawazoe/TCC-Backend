@@ -1,5 +1,6 @@
 const crop = require('../models/crop')
 const user = require('../models/user')
+const findLatlng = require('../service/findLatlng')
 
 module.exports = {
     async store(req, res) {
@@ -7,7 +8,7 @@ module.exports = {
             nome,
             dono,
             participantes,
-            localizacao
+            endereco
         } = req.body
 
         const cropExists = await crop.findOne({ dono })
@@ -17,19 +18,31 @@ module.exports = {
             if (cropExists.nome == nome) {
                 return res.json("Nome da horta já foi utilizada!")
             }
-            if (cropExists.localizacao.endereco.rua == localizacao.endereco.rua &&
-                cropExists.localizacao.endereco.numero == localizacao.endereco.numero) {
-                return res.json("Horta já cadastrado!")
+            if (cropExists.localizacao.endereco == endereco) {
+                return res.json("Já existe uma horta cadastrada nesse endereço!")
             } else if (userExists) {
                 if (userExists.horta.length > 2)
                     return res.json("Você atingiu o número máximo de hortas!")
             }
         }
 
+        let localizacao
+
+        if(endereco) {
+            let latlng = await findLatlng(endereco)
+            localizacao = {
+                latitude: latlng.lat,
+                longitude: latlng.lng,
+                endereco: endereco
+            }
+        } else {
+            return res.json('Endereço é obrigatório!')
+        }
+
         const crops = await crop.create({
             nome: nome,
             dono: dono,
-            participantes: [participantes],
+            participantes: participantes,
             localizacao: localizacao,
             nivel: {
                 lvl: 0,
@@ -46,10 +59,7 @@ module.exports = {
     },
 
     async showAll(req, res) {
-        const { nome, dono, localizacao, lvl, participante } = req.body
-        return res.json(await crop.find({
-            nome: nome
-        }))
+        return res.json(await crop.find())
     },
 
     async showOne(req, res) {
@@ -64,7 +74,7 @@ module.exports = {
     },
 
     async cropsNumber(req, res) {
-        return res.json('Existem ' + (await crop.find()).length + ' hortas cadastradas no momentos!')
+        return res.json(parseInt(await crop.find()).length)
     },
 
     async delete(req, res) {
@@ -87,39 +97,50 @@ module.exports = {
         const { dono, nome, usuario } = req.body
 
         const exists = await crop.findOne({ dono, nome })
-        const participantExists = await crop.findOne({ participantes: usuario })
+        let participantExists = false
+
+        if (!exists)
+            return res.json('Horta não existe!')
+
+        exists.participantes.map(element => {
+            if (element === usuario)
+                participantExists = true
+        })
 
         if (participantExists) {
             return res.json("Participante já faz parte desta horta!!")
         }
 
-        if (exists) {
-            await crop.updateOne(
-                { _id: exists._id },
-                { $addToSet: { participantes: usuario } }
-            )
-            return res.json('Participante inserido com sucesso!')
-        }
-        return res.json('Horta não existe!')
+        await crop.updateOne(
+            { _id: exists._id },
+            { $addToSet: { participantes: usuario } }
+        )
+        return res.json('Participante inserido com sucesso!')
     },
 
     async removeUser(req, res) {
         const { dono, nome, usuario } = req.body
 
-        const participantExists = await crop.findOne({ participantes: usuario })
         const exists = await crop.findOne({ dono, nome })
+        let participantExists = false
 
-        if (participantExists) {
-            if (exists) {
-                await crop.updateOne(
-                    { dono: dono, nome: nome },
-                    { $pull: { participantes: usuario } }
-                )
-                return res.json("Participante removido com sucesso!")
-            }
-            return res.json("Horta não existe!")
+        if (!exists)
+            return res.json('Horta não existe!')
+
+        exists.participantes.map(element => {
+            if (element === usuario)
+                participantExists = true
+        })
+
+        if (!participantExists) {
+            return res.json("Participante não faz parte desta horta!")
         }
-        return res.json("Participante não faz parte desta horta!")
+
+        await crop.updateOne(
+            { dono: dono, nome: nome },
+            { $pull: { participantes: usuario } }
+        )
+        return res.json("Participante removido com sucesso!")
     },
 
     async update(req, res) {
@@ -143,9 +164,13 @@ module.exports = {
 
         await user.updateOne(
             { usuario: dono },
-            { $set: { horta: {
-                nome: novoNome
-            } } }
+            {
+                $set: {
+                    horta: {
+                        nome: novoNome
+                    }
+                }
+            }
         )
 
         return res.json("Alterações realizadas com sucesso!")

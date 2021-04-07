@@ -1,6 +1,7 @@
 const user = require('../models/user')
-const auth_token = require('../services/auth')
+const auth_token = require('../service/auth')
 const md5 = require("md5")
+const findLatlng = require('../service/findLatlng')
 
 module.exports = {
     async store(req, res) {
@@ -9,7 +10,7 @@ module.exports = {
             usuario,
             senha,
             nome,
-            localizacao
+            endereco
         } = req.body
 
         const userExists = await user.findOne({
@@ -21,6 +22,19 @@ module.exports = {
 
         if (userExists || nameExists) {
             return res.json("Usuário já cadastrado!")
+        }
+    
+        let localizacao
+
+        if(endereco) {
+            let latlng = await findLatlng(endereco)
+            localizacao = {
+                latitude: latlng.lat,
+                longitude: latlng.lng,
+                endereco: endereco
+            }
+        } else {
+            return res.json('Endereço é obrigatório!')
         }
 
         const token = await auth_token.generateToken({
