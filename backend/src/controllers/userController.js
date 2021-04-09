@@ -16,6 +16,7 @@ module.exports = {
         const userExists = await user.findOne({
             usuario
         })
+
         const nameExists = await user.findOne({
             nome
         })
@@ -77,7 +78,8 @@ module.exports = {
     },
 
     async usersNumber(req, res) {
-        return res.json(parseInt(await user.find().length))
+        const result = await user.find()
+        return res.json(result)
     },
 
     async delete(req, res) {
@@ -140,14 +142,10 @@ module.exports = {
 
             return res.json(exists)
         }
-
-        exists = await user.findOne({
-            usuario
-        })
         return res.json('Usuário não existe!')
     },
 
-    async xpUpdate(req, res) {
+    // async xpUpdate(req, res) {
         
-    }
+    // }
 }

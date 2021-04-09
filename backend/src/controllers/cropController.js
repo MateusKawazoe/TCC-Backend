@@ -12,23 +12,25 @@ module.exports = {
         } = req.body
 
         const cropExists = await crop.findOne({ dono })
-        const userExists = await user.findOne({ username: dono })
+        const userExists = await user.findOne({ usuario: dono })
+
+        if (!userExists)
+            return res.json("Usuário não existe!")
 
         if (cropExists) {
-            if (cropExists.nome == nome) {
+            if (cropExists.nome == nome)
                 return res.json("Nome da horta já foi utilizada!")
-            }
-            if (cropExists.localizacao.endereco == endereco) {
+
+            if (cropExists.localizacao.endereco == endereco)
                 return res.json("Já existe uma horta cadastrada nesse endereço!")
-            } else if (userExists) {
-                if (userExists.horta.length > 2)
-                    return res.json("Você atingiu o número máximo de hortas!")
-            }
+
+            if (userExists.horta.length === 3)
+                return res.json("Você atingiu o número máximo de hortas!")
         }
 
         let localizacao
 
-        if(endereco) {
+        if (endereco) {
             let latlng = await findLatlng(endereco)
             localizacao = {
                 latitude: latlng.lat,
@@ -63,7 +65,7 @@ module.exports = {
     },
 
     async showOne(req, res) {
-        const { dono, nome } = req.body
+        const { dono, nome } = req.headers
         const exists = await crop.findOne({ dono, nome })
 
         if (exists) {
@@ -74,7 +76,7 @@ module.exports = {
     },
 
     async cropsNumber(req, res) {
-        return res.json(parseInt(await crop.find()).length)
+        return res.json(await crop.find().then(crop => { return parseInt(crop.length) }))
     },
 
     async delete(req, res) {
@@ -108,7 +110,7 @@ module.exports = {
         })
 
         if (participantExists) {
-            return res.json("Participante já faz parte desta horta!!")
+            return res.json('Participante já faz parte desta horta!')
         }
 
         await crop.updateOne(
@@ -173,6 +175,6 @@ module.exports = {
             }
         )
 
-        return res.json("Alterações realizadas com sucesso!")
+        return res.json("Nome da horta atualizado com sucesso!")
     }
 }

@@ -23,7 +23,7 @@ routes.put('/user/update', userController.update)
 
 routes.post('/crop/store', cropController.store)
 
-routes.get('/crop/CropsNumber', cropController.cropsNumber)
+routes.get('/crop/cropsNumber', cropController.cropsNumber)
 
 routes.get('/crop/showAll', cropController.showAll)
 
