@@ -16,7 +16,7 @@ const cropSchema = new Schema({
         longitude: Number
     },
     publicacoes: [],
-    sensores: {},
+    sensores: [],
     nivel: {}
 }, {
     timestamps: true

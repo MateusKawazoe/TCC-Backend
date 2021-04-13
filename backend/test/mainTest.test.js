@@ -6,11 +6,12 @@ const findZipCodeTest = require('../test/service/findZipCode')
 const findFullAddressTest = require('../test/service/findFullAddress')
 const server = require('../src/config/server')
 const mongoose = require('mongoose')
+require('dotenv/config')
 
 var app
 
 beforeAll(async (done) => {
-    app = await server
+    app = await server(process.env.MONGO_TEST_URL)
     done()
 })
 
@@ -26,8 +27,7 @@ describe('service test', () => {
     findFullAddressTest()
 })
 
-afterAll(async (done) => {
+afterAll(async () => {
     app.close()
     await mongoose.connection.close()
-    done()
 })

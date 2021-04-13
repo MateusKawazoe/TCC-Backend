@@ -1,22 +1,21 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors')
-require('dotenv/config')
-
 const routes = require('../routes')
 
-const server = express()
+module.exports = (url) => {
+    const server = express()
 
-mongoose.connect(
-    process.env.MONGO_URL,
-    { useNewUrlParser: true, useUnifiedTopology: true }
-)
+    mongoose.connect(
+        url,
+        { useNewUrlParser: true, useUnifiedTopology: true }
+    )
 
-server.use(cors())
-server.use(express.json())
-server.use(routes)
+    server.use(cors())
+    server.use(express.json())
+    server.use(routes)
 
-const app = server.listen(3333)
+    const app = server.listen(3333)
 
-module.exports = app
-
+    return app
+}
