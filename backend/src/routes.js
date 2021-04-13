@@ -35,6 +35,10 @@ routes.put('/crop/insertUser', cropController.insertUser)
 
 routes.put('/crop/removeUser', cropController.removeUser)
 
+routes.put('/crop/insertSensor', cropController.insertSensor)
+
+routes.put('/crop/removeSensor', cropController.removeSensor)
+
 routes.put('/crop/update', cropController.update)
 
 // -- Crop routes

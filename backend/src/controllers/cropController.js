@@ -99,15 +99,11 @@ module.exports = {
         const { dono, nome, usuario } = req.body
 
         const exists = await crop.findOne({ dono, nome })
-        let participantExists = false
 
         if (!exists)
             return res.json('Horta não existe!')
 
-        exists.participantes.map(element => {
-            if (element === usuario)
-                participantExists = true
-        })
+        const participantExists = exists.participantes.find(element => element === usuario)
 
         if (participantExists) {
             return res.json('Participante já faz parte desta horta!')
@@ -124,15 +120,11 @@ module.exports = {
         const { dono, nome, usuario } = req.body
 
         const exists = await crop.findOne({ dono, nome })
-        let participantExists = false
 
         if (!exists)
             return res.json('Horta não existe!')
 
-        exists.participantes.map(element => {
-            if (element === usuario)
-                participantExists = true
-        })
+        const participantExists = exists.participantes.find(element => element === usuario)
 
         if (!participantExists) {
             return res.json("Participante não faz parte desta horta!")
@@ -143,6 +135,52 @@ module.exports = {
             { $pull: { participantes: usuario } }
         )
         return res.json("Participante removido com sucesso!")
+    },
+
+    async insertSensor(req, res) {
+        const { dono, nome, tipo, descricao, url, valor } = req.body
+
+        const exists = await crop.findOne({ dono, nome })
+        const sensorExists = exists.sensores.find(element => element.tipo === tipo)
+
+        if(sensorExists)
+            return res.json('Sensor já cadastrado!')
+
+        if (!exists)
+            return res.json("Horta não existe!")
+
+        const sensor = {
+            tipo: tipo,
+            descricao: descricao,
+            url: url,
+            valor: valor
+        }
+
+        await crop.updateOne(
+            { _id: exists._id },
+            { $addToSet: { sensores: sensor } }
+        )
+
+        return res.json('Sensor cadastrado com sucesso!')
+    },
+
+    async removeSensor(req, res) {
+        const { dono, nome, tipo} = req.body
+
+        const exists = await crop.findOne({ dono, nome })
+        const sensorExists = exists.sensores.find(element => element.tipo === tipo)
+
+        if(!sensorExists)
+            return res.json('Sensor não cadastrado!')
+        if (!exists)
+            return res.json("Horta não existe!")
+
+        await crop.updateOne(
+            { _id: exists._id },
+            { $pull: { sensores: { tipo: tipo } } }
+        )
+
+        return res.json('Sensor deletado com sucesso!')
     },
 
     async update(req, res) {
