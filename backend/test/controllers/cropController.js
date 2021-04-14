@@ -105,13 +105,13 @@ module.exports = () => {
     })
 
     test('show all crops', async () => {
-        result = await axios.get('http://localhost:3333/crop/showAll')
+        result = await axios.get('http://localhost:3333/crop/show/all')
         expect(result.data[0].nome).toBe('Fazendinha Feliz')
         expect(result.data.length).toBe(3)
     })
 
     test('show one crop', async () => {
-        result = await axios.get('http://localhost:3333/crop/showOne', {
+        result = await axios.get('http://localhost:3333/crop/show/one', {
             headers: {
                 dono: 'Mateuskwz',
                 nome: 'Fazendinha Feliz'
@@ -122,7 +122,7 @@ module.exports = () => {
     })
 
     test('show an unexisting crop', async () => {
-        result = await axios.get('http://localhost:3333/crop/showOne', {
+        result = await axios.get('http://localhost:3333/crop/show/one', {
             headers: {
                 dono: 'Mateuskwz',
                 nome: 'Fazendinha Felizona'
@@ -132,12 +132,12 @@ module.exports = () => {
     })
 
     test('number of crops', async () => {
-        result = await axios.get('http://localhost:3333/crop/cropsNumber')
+        result = await axios.get('http://localhost:3333/crop/number')
         expect(result.data).toBe(3)
     })
 
     test('succefull user insert into a crop', async () => {
-        result = await axios.put('http://localhost:3333/crop/insertUser', {
+        result = await axios.put('http://localhost:3333/crop/insert/user', {
             dono: 'Mateuskwz',
             nome: 'Fazendinha Feliz',
             usuario: 'ErickZin'
@@ -146,7 +146,7 @@ module.exports = () => {
     })
 
     test('insert a user into an unexisting crop', async () => {
-        result = await axios.put('http://localhost:3333/crop/insertUser', {
+        result = await axios.put('http://localhost:3333/crop/insert/user', {
             dono: 'Mateuskwz',
             nome: 'Fazendinha Felizona',
             usuario: 'ErickZin'
@@ -155,7 +155,7 @@ module.exports = () => {
     })
 
     test('insert the same user into the same crop', async () => {
-        result = await axios.put('http://localhost:3333/crop/insertUser', {
+        result = await axios.put('http://localhost:3333/crop/insert/user', {
             dono: 'Mateuskwz',
             nome: 'Fazendinha Feliz',
             usuario: 'ErickZin'
@@ -164,7 +164,7 @@ module.exports = () => {
     })
 
     test('remove an user from the crop', async () => {
-        result = await axios.put('http://localhost:3333/crop/removeUser', {
+        result = await axios.put('http://localhost:3333/crop/remove/user', {
             dono: 'Mateuskwz',
             nome: 'Fazendinha Feliz',
             usuario: 'ErickZin'
@@ -172,8 +172,8 @@ module.exports = () => {
         expect(result.data).toBe('Participante removido com sucesso!')
     })
 
-    test('remove a user into an unexisting crop', async () => {
-        result = await axios.put('http://localhost:3333/crop/removeUser', {
+    test('remove an user from an unexisting crop', async () => {
+        result = await axios.put('http://localhost:3333/crop/remove/user', {
             dono: 'Mateuskwz',
             nome: 'Fazendinha Felizona',
             usuario: 'ErickZin'
@@ -182,7 +182,7 @@ module.exports = () => {
     })
 
     test('remove an user that doesn"t belong to the crop', async () => {
-        result = await axios.put('http://localhost:3333/crop/removeUser', {
+        result = await axios.put('http://localhost:3333/crop/remove/user', {
             dono: 'Mateuskwz',
             nome: 'Fazendinha Feliz',
             usuario: 'DanielGaletti'
@@ -190,8 +190,77 @@ module.exports = () => {
         expect(result.data).toBe('Participante não faz parte desta horta!')
     })
 
+    // test('succefull sensor insert into a crop', async () => {
+    //     result = await axios.put('http://localhost:3333/crop/insert/sensor', {
+    //         dono: 'Mateuskwz',
+    //         nome: 'Fazendinha Feliz',
+    //         tipo: 'Sensor de Umidade',
+    //         descricao: 'Monitoramento de umidade de uma flor de abacaxi na cidade de Piraju.',
+    //         valor: 0 
+    //     })
+    //     expect(result.data).toBe('Sensor inserido com sucesso!')
+    // })
+
+    // test('insert a sensor into an unexisting crop', async () => {
+    //     result = await axios.put('http://localhost:3333/crop/insert/sensor', {
+    //         dono: 'Mateuskwz',
+    //         nome: 'Fazendinha Felizona',
+    //         tipo: 'Sensor de Umidade',
+    //         descricao: 'Monitoramento de umidade de uma flor de abacaxi na cidade de Piraju.',
+    //         valor: 0 
+    //     })
+    //     expect(result.data).toBe('Horta não existe!')
+    // })
+
+    // test('insert the same sensor into the same crop', async () => {
+    //     result = await axios.put('http://localhost:3333/crop/insert/sensor', {
+    //         dono: 'Mateuskwz',
+    //         nome: 'Fazendinha Feliz',
+    //         tipo: 'Sensor de Umidade',
+    //         descricao: 'Monitoramento de umidade de uma flor de abacaxi na cidade de Piraju.',
+    //         valor: 0 
+    //     })
+    //     expect(result.data).toBe('Sensor já cadastrado!')
+    // })
+
+    // test('update sensor value', () => {
+    //     result = await axios.put('http://localhost:3333/crop/update/sensor/value', {
+    //         dono: 'Mateuskwz',
+    //         nome: 'Fazendinha Feliz',
+    //         tipo: 'Sensor de Umidade',
+    //         valor: 170
+    //     })
+    // })
+
+    // test('remove a sensor from the crop', async () => {
+    //     result = await axios.put('http://localhost:3333/crop/remove/sensor', {
+    //         dono: 'Mateuskwz',
+    //         nome: 'Fazendinha Feliz',
+    //         tipo: 'Sensor de Umidade'
+    //     })
+    //     expect(result.data).toBe('Sensor removido com sucesso!')
+    // })
+
+    // test('remove a sensor from an unexisting crop', async () => {
+    //     result = await axios.put('http://localhost:3333/crop/remove/sensor', {
+    //         dono: 'Mateuskwz',
+    //         nome: 'Fazendinha Felizona',
+    //         tipo: 'Sensor de Umidade'
+    //     })
+    //     expect(result.data).toBe('Horta não existe!')
+    // })
+
+    // test('remove a sensor that doesn"t belong to the crop', async () => {
+    //     result = await axios.put('http://localhost:3333/crop/remove/sensor', {
+    //         dono: 'Mateuskwz',
+    //         nome: 'Fazendinha Feliz',
+    //         tipo: 'Sensor de Umidade'
+    //     })
+    //     expect(result.data).toBe('Sensor não cadastrado!')
+    // })
+
     test('update the crop name', async () => {
-        result = await axios.put('http://localhost:3333/crop/update', {
+        result = await axios.put('http://localhost:3333/crop/update/name', {
             dono: 'Mateuskwz',
             nome: 'Fazendinha Feliz',
             novoNome: 'Fazendinha Alegre'
@@ -200,7 +269,7 @@ module.exports = () => {
     })
 
     test('try to update the crop"s name with the same name', async () => {
-        result = await axios.put('http://localhost:3333/crop/update', {
+        result = await axios.put('http://localhost:3333/crop/update/name', {
             dono: 'Mateuskwz',
             nome: 'Fazendinha Alegre',
             novoNome: 'Fazendinha Alegre'
@@ -209,7 +278,7 @@ module.exports = () => {
     })
 
     test('try to update an unexisting crop', async () => {
-        result = await axios.put('http://localhost:3333/crop/update', {
+        result = await axios.put('http://localhost:3333/crop/update/name', {
             dono: 'Mateuskwz',
             nome: 'Fazendinha Feliz',
             novoNome: 'Fazendinha Alegre'

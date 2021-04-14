@@ -7,11 +7,11 @@ const routes = express.Router()
 
 routes.post('/user/store', userController.store)
 
-routes.get('/user/usersNumber', userController.usersNumber)
+routes.get('/user/users/number', userController.usersNumber)
 
-routes.get('/user/showAll', userController.showAll)
+routes.get('/user/show/all', userController.showAll)
 
-routes.get('/user/showOne', userController.showOne)
+routes.get('/user/show/one', userController.showOne)
 
 routes.delete('/user/delete', userController.delete)
 
@@ -23,23 +23,25 @@ routes.put('/user/update', userController.update)
 
 routes.post('/crop/store', cropController.store)
 
-routes.get('/crop/cropsNumber', cropController.cropsNumber)
+routes.get('/crop/number', cropController.cropsNumber)
 
-routes.get('/crop/showAll', cropController.showAll)
+routes.get('/crop/show/all', cropController.showAll)
 
-routes.get('/crop/showOne', cropController.showOne)
+routes.get('/crop/show/one', cropController.showOne)
 
 routes.delete('/crop/delete', cropController.delete)
 
-routes.put('/crop/insertUser', cropController.insertUser)
+routes.put('/crop/insert/user', cropController.insertUser)
 
-routes.put('/crop/removeUser', cropController.removeUser)
+routes.put('/crop/remove/user', cropController.removeUser)
 
-routes.put('/crop/insertSensor', cropController.insertSensor)
+routes.put('/crop/insert/sensor', cropController.insertSensor)
 
-routes.put('/crop/removeSensor', cropController.removeSensor)
+routes.put('/crop/remove/sensor', cropController.removeSensor)
 
-routes.put('/crop/update', cropController.update)
+routes.put('/crop/update/name', cropController.update)
+
+// routes.put('/crop/update/sensor', cropController.updateSensor)
 
 // -- Crop routes
 

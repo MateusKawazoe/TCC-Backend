@@ -39,7 +39,7 @@ module.exports = () => {
     })
 
     test('show one user', async () => {
-        result = await axios.get('http://localhost:3333/user/showOne', {
+        result = await axios.get('http://localhost:3333/user/show/one', {
             headers: {
                 usuario: 'Luquinhas'
             }
@@ -48,7 +48,7 @@ module.exports = () => {
     })
 
     test('show a not existing user', async () => {
-        result = await axios.get('http://localhost:3333/user/showOne', {
+        result = await axios.get('http://localhost:3333/user/show/one', {
             headers: {
                 usuario: 'Loucura'
             }
@@ -82,12 +82,12 @@ module.exports = () => {
     })
 
     test('show all users', async () => {
-        result = await axios.get('http://localhost:3333/user/showall')
+        result = await axios.get('http://localhost:3333/user/show/all')
         expect(result.data[0].nome).toBe('Lucas Camargo Shizuno')
     })
 
     test('show the number of users', async () => {
-        result = await axios.get('http://localhost:3333/user/usersNumber')
+        result = await axios.get('http://localhost:3333/user/users/number')
         expect(result.data.length).toBe(1)
     })
 
